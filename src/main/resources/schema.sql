@@ -47,6 +47,33 @@ CREATE TABLE IF NOT EXISTS comercial (
     comision FLOAT NOT NULL
 );
 
+SET @comision_existe = (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'comercial'
+      AND COLUMN_NAME = 'comision'
+);
+SET @comision_acentuada_existe = (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'comercial'
+      AND COLUMN_NAME = 'comisión'
+);
+SET @sql_comision = IF(
+    @comision_existe > 0,
+    'SELECT 1',
+    IF(
+        @comision_acentuada_existe > 0,
+        'ALTER TABLE comercial CHANGE COLUMN `comisión` comision FLOAT NOT NULL',
+        'ALTER TABLE comercial ADD COLUMN comision FLOAT NOT NULL DEFAULT 0'
+    )
+);
+PREPARE stmt_comision FROM @sql_comision;
+EXECUTE stmt_comision;
+DEALLOCATE PREPARE stmt_comision;
+
 CREATE TABLE IF NOT EXISTS pedido (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     total DOUBLE NOT NULL,

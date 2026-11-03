@@ -1,5 +1,7 @@
 package org.iesvegademijas.tienda_informatica.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,17 +26,20 @@ public class ClienteDAOImpl implements ClienteDAO {
 
 	@Override
 	public List<Cliente> getAll() {
-		return jdbcTemplate.query("SELECT * FROM cliente ORDER BY id", (rs, rowNum) -> new Cliente(
-				rs.getInt("id"), rs.getString("nombre"), rs.getString("apellido1"), rs.getString("apellido2"),
-				rs.getString("ciudad"), (Integer) rs.getObject("categoria")));
+		return jdbcTemplate.query("SELECT * FROM cliente ORDER BY id", (rs, rowNum) -> mapCliente(rs));
 	}
 
 	@Override
 	public Optional<Cliente> find(int id) {
 		List<Cliente> clientes = jdbcTemplate.query("SELECT * FROM cliente WHERE id = ?",
-				(rs, rowNum) -> new Cliente(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellido1"),
-						rs.getString("apellido2"), rs.getString("ciudad"), (Integer) rs.getObject("categoria")), id);
+				(rs, rowNum) -> mapCliente(rs), id);
 		return clientes.stream().findFirst();
+	}
+
+	private Cliente mapCliente(ResultSet rs) throws SQLException {
+		Number categoria = (Number) rs.getObject("categoria");
+		return new Cliente(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellido1"),
+				rs.getString("apellido2"), rs.getString("ciudad"), categoria == null ? null : categoria.longValue());
 	}
 
 	@Override

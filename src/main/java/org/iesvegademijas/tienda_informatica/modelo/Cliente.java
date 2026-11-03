@@ -7,12 +7,12 @@ public class Cliente {
 	private String apellido1;
 	private String apellido2;
 	private String ciudad;
-	private Integer categoria;
+	private Long categoria;
 
 	public Cliente() {
 	}
 
-	public Cliente(int id, String nombre, String apellido1, String apellido2, String ciudad, Integer categoria) {
+	public Cliente(int id, String nombre, String apellido1, String apellido2, String ciudad, Long categoria) {
 		this.id = id;
 		this.nombre = nombre;
 		this.apellido1 = apellido1;
@@ -61,11 +61,11 @@ public class Cliente {
 		this.ciudad = ciudad;
 	}
 
-	public Integer getCategoria() {
+	public Long getCategoria() {
 		return categoria;
 	}
 
-	public void setCategoria(Integer categoria) {
+	public void setCategoria(Long categoria) {
 		this.categoria = categoria;
 	}
 }
